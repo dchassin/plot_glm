@@ -14,6 +14,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Requirements
+      run: python3 -m pip install networkx
     - name: Validation
       run: |
         cd src
