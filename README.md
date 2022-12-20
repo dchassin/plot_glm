@@ -2,6 +2,12 @@
 
 This utility may be used standalone or installed as a GridLAB-D tool.
 
+## Quick install
+
+~~~
+curl -sL https://raw.githubusercontent.com/dchassin/plot_glm/main/install.sh | bash
+~~~
+
 ## Standalone use
 
 Run the following command
