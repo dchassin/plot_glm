@@ -124,7 +124,8 @@ def convert(inputfile=None,
     with open(f"{workdir}/{inputfile}",'r') as fh:
         
         glm = json.load(fh)
-        G = graph(glm,figsize=(10,7))
+        plt.figure(figsize=(10,7))
+        G = graph(glm,)
         if TITLE:
             if TITLE == True:
                 title = os.path.splitext(os.path.basename(inputfile))[0]
@@ -140,7 +141,7 @@ def convert(inputfile=None,
         return E_OK
     return E_FAILED
 
-def graph(glm,**kwargs):
+def graph(glm):
     G = networkx.Graph()
     link = []
     node = []
@@ -175,7 +176,6 @@ def graph(glm,**kwargs):
                     color = color(data["phases"]),
                     weight = weight)
 
-    plt.figure(**kwargs)
     edge_colors = networkx.get_edge_attributes(G,'color').values()
     edge_weights = networkx.get_edge_attributes(G,'weight').values()
     node_colors = networkx.get_node_attributes(G,'color').values()
