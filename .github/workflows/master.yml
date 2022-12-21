@@ -1,0 +1,29 @@
+name: Master
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    container: slacgismo/gridlabd:latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Requirements
+      run: python3 -m pip install -r requirements.txt
+    - name: Validation
+      run: |
+        cd src
+        python3 -m plot_glm
+    - name: Save results
+      uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: validate-result
+        path: |
+          validate.txt
