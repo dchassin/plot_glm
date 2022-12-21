@@ -142,10 +142,11 @@ def convert(inputfile=None,
             plt.savefig(outputfile)
         if showplot:
             plt.show()
+        plt.close()
         return E_OK
     return E_FAILED
 
-def graph(glm,**kwargs):
+def graph(glm):
     G = networkx.Graph()
     link = []
     node = []
@@ -180,7 +181,6 @@ def graph(glm,**kwargs):
                     color = color(data["phases"]),
                     weight = weight)
 
-    plt.figure(**kwargs)
     edge_colors = networkx.get_edge_attributes(G,'color').values()
     edge_weights = networkx.get_edge_attributes(G,'weight').values()
     node_colors = networkx.get_node_attributes(G,'color').values()

@@ -1,12 +1,9 @@
+[![Main](https://github.com/dchassin/plot_glm/actions/workflows/main.yml/badge.svg)](https://github.com/dchassin/plot_glm/actions/workflows/main.yml)
+[![Develop](https://github.com/dchassin/plot_glm/actions/workflows/develop.yml/badge.svg)](https://github.com/dchassin/plot_glm/actions/workflows/develop.yml)
+
 # plot_glm
 
 This utility may be used standalone or installed as a GridLAB-D tool.
-
-## Quick install
-
-~~~
-curl -sL https://raw.githubusercontent.com/dchassin/plot_glm/main/install.sh | bash
-~~~
 
 ## Standalone use
 
