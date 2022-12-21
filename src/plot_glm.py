@@ -36,6 +36,7 @@ import math
 import networkx
 import matplotlib.pyplot as plt
 import traceback
+import signal
 
 BASENAME = os.path.splitext(os.path.basename(sys.argv[0]))[0]
 INPUTFILE = None
@@ -46,7 +47,7 @@ OUTPUT = ""
 ERRORS = ""
 BASEPOWER = 1e3
 GRAPHLAYOUT = "kamada_kawai"
-TIMEOUT = None # TODO
+TIMEOUT = None 
 TITLE = False
 NODESIZE = 25
 NODESHAPE = 'o'
@@ -54,10 +55,14 @@ NODESHAPE = 'o'
 E_OK = 0
 E_FAILED = 1
 E_SYNTAX = 2
+E_TIMEOUT = 3
 
 RETURNCODE = 0
 
 class ConverterException(Exception):
+    pass
+
+class ConverterTimeout(Exception):
     pass
 
 def error(msg,code=None):
@@ -124,7 +129,8 @@ def convert(inputfile=None,
     with open(f"{workdir}/{inputfile}",'r') as fh:
         
         glm = json.load(fh)
-        G = graph(glm,figsize=(10,7))
+        plt.figure(figsize=(10,7))
+        G = graph(glm)
         if TITLE:
             if TITLE == True:
                 title = os.path.splitext(os.path.basename(inputfile))[0]
@@ -193,7 +199,7 @@ def validate():
     failed = 0
     TESTDIR = WORKDIR + "/autotest"
     with open("validate.txt","w") as fh:
-        for file in os.listdir(TESTDIR):
+        for file in sorted(os.listdir(TESTDIR)):
             if not file.endswith(".glm"):
                 continue
             outputfile = f"{TESTDIR}/{file.replace('.glm','.png')}"
@@ -203,6 +209,12 @@ def validate():
                 tested += 1
                 continue
             try:
+                if TIMEOUT:
+                        def timeout(signum,frame):
+                            raise ConverterTimeout(f"timeout after {TIMEOUT} seconds")
+                        signal.signal(signal.SIGALRM,timeout)
+                        signal.alarm(TIMEOUT)
+
                 if convert(file,
                         outputfile=outputfile,
                         workdir=TESTDIR):
@@ -214,6 +226,11 @@ def validate():
                     print("OK")
                     print("*** TEST",file,"OK\n" + OUTPUT,file=fh,flush=True)
                     print("",file=fh,flush=True)
+            except ConverterTimeout as err:
+                print("TIMEOUT")
+                print("*** TEST",file,"TIMEOUT\n",file=fh,flush=True)
+                print("",file=fh,flush=True)
+                failed += 1
             except Exception as err:
                 print("EXCEPTION")
                 print("*** TEST",file,"EXCEPTION\n",file=fh,flush=True)
@@ -222,6 +239,8 @@ def validate():
                 failed += 1
             finally:
                 tested += 1
+                signal.alarm(0)
+                plt.close()
     print(tested,"tested")
     print(failed,"failed")
     print(f"{(100-(100*failed)/tested):.0f}% passing")
@@ -289,6 +308,12 @@ if __name__ == "__main__":
             RETURNCODE = E_SYNTAX
 
     else:
+
+        if TIMEOUT:
+            def timeout(signum,frame):
+                error("timeout",E_TIMEOUT)
+            signal.signal(signal.SIGALRM,timeout)
+            signal.alarm(TIMEOUT)
 
         RETURNCODE = convert(INPUTFILE,OUTPUTFILE,SHOWPLOT)
 
