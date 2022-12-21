@@ -136,6 +136,7 @@ def convert(inputfile=None,
             plt.savefig(outputfile)
         if showplot:
             plt.show()
+        plt.close()
         return E_OK
     return E_FAILED
 
