@@ -1,5 +1,6 @@
 {
   "application" : "gridlabd",
   "version" : 4.3,
+  "tool-name" : "plot_glm",
   "install-command" : "curl -sL https://raw.githubusercontent.com/dchassin/plot_glm/{branch}/install.sh | bash"
 }
